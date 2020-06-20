@@ -6,6 +6,10 @@ module.exports = (io) => {
 	io.on('connection', (socket) => {
 		console.log('New user connected');
 
+		for (let i in line_log) {
+			socket.emit('draw_line', { line: line_log[i] });
+		}
+
 		socket.on('draw_line', (data) => {
 			//Save data sent from client in array
 			line_log.push(data.line);
