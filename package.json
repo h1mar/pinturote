@@ -4,7 +4,7 @@
 	"description": "copia de pinturillo",
 	"main": "index.js",
 	"scripts": {
-		"dev": "nodemon ./src/index.js"
+		"start": "node ./src/index.js"
 	},
 	"repository": {
 		"type": "git",
