@@ -13,8 +13,21 @@ module.exports = (io) => {
 		socket.on('draw_line', (data) => {
 			//Save data sent from client in array
 			line_log.push(data.line);
+
 			//Sent data sent in Array
 			io.emit('draw_line', { line: data.line });
+		});
+
+		socket.on('clear_canvas', () => {
+			console.log('Received clear');
+
+			socket.emit('clear_canvas');
+
+			console.log('Sent clear');
+
+			line_log = [];
+
+			console.log('Coords clear');
 		});
 	});
 };

@@ -13,6 +13,7 @@ function init() {
 	const canvas = document.getElementById('drawing');
 	const context = canvas.getContext('2d');
 	let strokeColor = 'black';
+	const clearButton = document.getElementById('clear');
 
 	//Get window height & width
 	// const width = canvas.width;
@@ -33,9 +34,15 @@ function init() {
 			console.log(strokeColor);
 		});
 	}
-
+	getSelectColor();
 	//Connecting to socket
 	const socket = io();
+
+	clearButton.addEventListener('click', (e) => {
+		context.clearRect(0, 0, canvas.width, canvas.height);
+
+		socket.emit('clear_canvas');
+	});
 
 	canvas.addEventListener('mousedown', (e) => {
 		mouse.click = true;
@@ -64,12 +71,17 @@ function init() {
 		// console.log(mouse.pos.x, mouse.pos.y);
 	});
 
+	socket.on('clear_canvas', () => {
+		console.log('Received Clear');
+		context.clearRect(0, 0, canvas.width, canvas.height);
+	});
+
 	//Getting data sent from server to client
 	socket.on('draw_line', (data) => {
 		//Saving data
 		const line = data.line;
 		context.beginPath();
-		context.strokeStyle = strokeColor;
+		context.strokeStyle = line[2];
 		context.lineJoin = 'round';
 		context.lineCap = 'round';
 		context.lineWidth = 2;
@@ -77,16 +89,18 @@ function init() {
 		context.lineTo(line[1].x, line[1].y);
 		context.stroke();
 
-		// console.log(data.line);
+		console.log(data.line);
 	});
 
 	function mainLoop() {
 		if (mouse.click && mouse.moving && mouse.last_pos) {
 			//Send data to server
-			socket.emit('draw_line', { line: [mouse.pos, mouse.last_pos] });
+			socket.emit('draw_line', {
+				line: [mouse.pos, mouse.last_pos, strokeColor],
+			});
+
 			console.log('Sending data to server');
 			mouse.move = false;
-			getSelectColor();
 		}
 		mouse.last_pos = { x: mouse.pos.x, y: mouse.pos.y };
 		setTimeout(mainLoop, 10);
