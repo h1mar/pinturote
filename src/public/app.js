@@ -44,10 +44,14 @@ function init() {
 		socket.emit('clear_canvas');
 	});
 
+	//CLICK DOWN / TOUCH DOWN
+
 	canvas.addEventListener('mousedown', (e) => {
 		mouse.click = true;
 		console.log('CLICKING!!!!!!!');
 	});
+
+	//STOP CLICK / STOP TOUCH
 
 	canvas.addEventListener('mouseup', (e) => {
 		mouse.click = false;
@@ -55,6 +59,8 @@ function init() {
 	});
 
 	let rect = canvas.getBoundingClientRect();
+
+	//MOUSE MOVE / TOUCH MOVE
 
 	canvas.addEventListener('mousemove', (e) => {
 		mouse.pos.x = e.pageX - rect.left - scrollX;
@@ -71,9 +77,12 @@ function init() {
 		// console.log(mouse.pos.x, mouse.pos.y);
 	});
 
+	//CLEAR THE CANVAS
+
 	socket.on('clear_canvas', () => {
 		console.log('Received Clear');
 		context.clearRect(0, 0, canvas.width, canvas.height);
+		location.reload();
 	});
 
 	//Getting data sent from server to client
@@ -84,7 +93,7 @@ function init() {
 		context.strokeStyle = line[2];
 		context.lineJoin = 'round';
 		context.lineCap = 'round';
-		context.lineWidth = 2;
+		context.lineWidth = 5;
 		context.moveTo(line[0].x, line[0].y);
 		context.lineTo(line[1].x, line[1].y);
 		context.stroke();
